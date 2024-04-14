@@ -5,7 +5,7 @@ on:
 
 jobs:
   health-check:
-    runs-on: [self-hosted, windows, gram8]
+    runs-on: ubuntu-latest
     steps:
       - name: Set up Python
         uses: actions/setup-python@v3
@@ -16,7 +16,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install psutil
-        shell: powershell
 
       - name: Run Health Check
         run: |
@@ -34,7 +33,7 @@ jobs:
               return free > 20
 
           if __name__ == "__main__":
-              if not check_disk_usage("C:\\"):
+              if not check_disk_usage("/"):
                   print("ERROR: Not enough disk space")
               if not check_memory_usage():
                   print("ERROR: Not enough memory")
