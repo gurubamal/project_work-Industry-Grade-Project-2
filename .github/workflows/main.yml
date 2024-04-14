@@ -31,22 +31,22 @@ jobs:
 
           def build_image(image_name, dockerfile_path='.'):
               print("Building Docker image...")
-              run_command(f'docker build -t {image_name} {dockerfile_path}')
+              run_command(f'sudo docker build -t {image_name} {dockerfile_path}')
 
           def check_local_registry(port=5000):
               print("Checking for local Docker registry...")
               try:
-                  subprocess.check_output(f'docker inspect registry:{port}', shell=True)
+                  subprocess.check_output(f'sudo docker inspect registry:{port}', shell=True)
                   print(f"Registry already running on port {port}")
               except subprocess.CalledProcessError:
                   print(f"No registry found on port {port}. Starting one...")
-                  run_command(f'docker run -d -p {port}:{port} --name registry registry:2')
+                  run_command(f'sudo docker run -d -p {port}:{port} --name registry registry:2')
 
           def push_image(image_name, registry_port=5000):
               local_registry_tag = f'localhost:{registry_port}/{image_name}'
               print("Tagging and pushing to local registry...")
-              run_command(f'docker tag {image_name} {local_registry_tag}')
-              run_command(f'docker push {local_registry_tag}')
+              run_command(f'sudo docker tag {image_name} {local_registry_tag}')
+              run_command(f'sudo docker push {local_registry_tag}')
 
           app_name = 'project2-website'
           image_name = 'project2-webapp-image'
