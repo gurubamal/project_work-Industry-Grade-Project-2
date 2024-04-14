@@ -16,3 +16,89 @@ jobs:
         run: |
            docker build -t project2-website .
            docker run -p 8080:8080 project2-website
+           import subprocess
+
+            def run_command(command):
+                """ Helper function to run a shell command and print the output """
+                try:
+                    output = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True, universal_newlines=True)
+                    print(output)
+                except subprocess.CalledProcessError as e:
+                    print("ERROR:", e.output)
+            
+            def build_image(image_name, dockerfile_path='.'):
+                """ Build a Docker image from a Dockerfile """
+                print("Building Docker image...")
+                run_command(f'docker build -t {image_name} {dockerfile_path}')
+            
+            def check_local_registry(port=5000):
+                """ Check if a local Docker registry is running, if not start one """
+                print("Checking for local Docker registry...")
+                try:
+                    subprocess.check_output(f'docker inspect registry:{port}', shell=True)
+                    print(f"Registry already running on port {port}")
+                except subprocess.CalledProcessError:
+                    print(f"No registry found on port {port}. Starting one...")
+                    run_command(f'docker run -d -p {port}:{port} --name registry registry:2')
+            
+            def push_image(image_name, registry_port=5000):
+                """ Tag and push an image to a local registry """
+                local_registry_tag = f'localhost:{registry_port}/{image_name}'
+                print("Tagging and pushing to local registry...")
+                run_command(f'docker tag {image_name} {local_registry_tag}')
+                run_command(f'docker push {local_registry_tag}')
+                return local_registry_tag
+            
+            def deploy_to_kubernetes(app_name, image_name, namespace='project2'):
+                """ Deploy the app to Kubernetes """
+                print("Deploying to Kubernetes...")
+                deployment_manifest = f"""
+            apiVersion: apps/v1
+            kind: Deployment
+            metadata:
+              name: {app_name}
+              namespace: {namespace}
+            spec:
+              replicas: 1
+              selector:
+                matchLabels:
+                  app: {app_name}
+              template:
+                metadata:
+                  labels:
+                    app: {app_name}
+                spec:
+                  containers:
+                  - name: {app_name}
+                    image: {image_name}
+                    ports:
+                    - containerPort: 8080
+            ---
+            apiVersion: v1
+            kind: Service
+            metadata:
+              name: {app_name}
+              namespace: {namespace}
+            spec:
+              type: NodePort
+              ports:
+              - port: 8080
+                targetPort: 8080
+                nodePort: 30080
+              selector:
+                app: {app_name}
+            """
+                with open('deployment.yml', 'w') as file:
+                    file.write(deployment_manifest)
+                run_command(f'kubectl apply -f deployment.yml')
+            
+            # Main execution
+            image_name = 'project2-website'
+            namespace = 'project2'
+            registry_port = 5000
+            
+            build_image(image_name)
+            check_local_registry(registry_port)
+            local_registry_image = push_image(image_name, registry_port)
+            deploy_to_kubernetes(image_name, local_registry_image, namespace)
+
