@@ -18,11 +18,6 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Install Docker and Kubernetes Tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker.io kubectl
-
       - name: Build and Push Docker Image and Deploy
         run: |
           import subprocess
