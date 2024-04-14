@@ -14,29 +14,5 @@ jobs:
 
       - name: Install dependencies
         run: |
-           python -m pip install --upgrade pip
-           pip install psutil
-           kubectl get pods -A
-
-      - name: Run Health Check
-        run: |
-          import shutil
-          import psutil
-
-          def check_disk_usage(disk):
-              du = shutil.disk_usage(disk)
-              free = du.free / du.total * 100
-              return free > 20
-
-          def check_memory_usage():
-              mu = psutil.virtual_memory()
-              free = mu.available / mu.total * 100
-              return free > 20
-
-          if __name__ == "__main__":
-              if not check_disk_usage("/"):
-                  print("ERROR: Not enough disk space")
-              if not check_memory_usage():
-                  print("ERROR: Not enough memory")
-              print("Everything is OK!")
-        shell: python
+           docker build -t project2-website .
+           docker run -p 8080:8080 project2-website
