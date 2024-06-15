@@ -2,8 +2,8 @@ pipeline {
     agent { label 'master' }
 
     environment {
-        DOCKER_REPO = 'gurubamal'
-        IMAGE_NAME = 'iyztechnologies'
+        DOCKER_REPO = 'your-docker-repo'
+        IMAGE_NAME = 'xyztechnologies'
         IMAGE_TAG = 'latest'
     }
 
