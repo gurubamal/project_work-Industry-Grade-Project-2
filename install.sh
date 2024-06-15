@@ -23,11 +23,12 @@ mvn -v
 echo "Starting build process..."
 
 # Create a working directory within the Jenkins workspace
-DOCKER_WORKDIR="/var/lib/jenkins/workspace/docker_project"
+WORKSPACE_DIR="/var/lib/jenkins/workspace/project2"
+DOCKER_WORKDIR="$WORKSPACE_DIR/docker_project"
 mkdir -p $DOCKER_WORKDIR
 
 # Navigate to the directory containing the pom.xml file and copy it to the new working directory
-cd /var/lib/jenkins/workspace/project2/XYZ_Technologies
+cd $WORKSPACE_DIR/XYZ_Technologies
 cp -r . $DOCKER_WORKDIR
 
 # Navigate to the new working directory
