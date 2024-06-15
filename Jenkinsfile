@@ -49,15 +49,35 @@ pipeline {
                       sudo apt-get update
                       sudo apt-get install -y kubectl
                     fi
-                    
+
                     # Set the KUBECONFIG environment variable
                     export KUBECONFIG=${KUBECONFIG}
                     
                     # Label the node5 if not already labeled
-                    kubectl label nodes node5 node=node5 --overwrite
+                    kubectl label nodes node5 kubernetes.io/hostname=node5 --overwrite
+
+                    # Create the namespace if it doesn't exist
+                    kubectl get namespace iynet || kubectl create namespace iynet
+
+                    # Check if deploy_app.yaml exists
+                    if [ ! -f "${WORKSPACE}/deploy_app.yaml" ]; then
+                        echo "Error: deploy_app.yaml not found!"
+                        exit 1
+                    fi
 
                     # Apply the deployment
-                    kubectl apply -f deploy_app.yaml
+                    kubectl apply -f ${WORKSPACE}/deploy_app.yaml
+
+                    # Check if the service is up and running
+                    NODE_PORT=$(kubectl get svc xyztechnologies-service -n iynet -o=jsonpath='{.spec.ports[0].nodePort}')
+                    NODE_IP=$(kubectl get nodes -o wide | grep node5 | awk '{print $6}')
+
+                    if [ -z "$NODE_PORT" ]; then
+                        echo "Failed to get the NodePort for the service"
+                        exit 1
+                    fi
+
+                    echo "Application is available at http://$NODE_IP:$NODE_PORT"
                     '''
                 }
             }
