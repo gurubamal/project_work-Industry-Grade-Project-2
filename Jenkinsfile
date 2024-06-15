@@ -2,10 +2,9 @@ pipeline {
     agent { label 'master' }
 
     environment {
-        DOCKER_REPO = 'your-docker-repo' // Replace with your Docker repository
-        IMAGE_NAME = 'xyztechnologies'   // Replace with your image name
-        IMAGE_TAG = 'latest'             // Replace with your image tag if needed
-        DOCKER_CREDENTIALS_ID = 'your-docker-credentials-id' // Replace with your Jenkins Docker credentials ID
+        DOCKER_REPO = 'gurubamal'
+        IMAGE_NAME = 'iyztechnologies'
+        IMAGE_TAG = 'latest'
     }
 
     stages {
@@ -31,16 +30,6 @@ pipeline {
             }
         }
 
-        stage('Build Maven Project') {
-            steps {
-                script {
-                    docker.image('maven:3.6.3-jdk-11-slim').inside {
-                        sh 'mvn clean package'
-                    }
-                }
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 script {
@@ -52,7 +41,7 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('', "${DOCKER_CREDENTIALS_ID}") {
+                    docker.withRegistry('', '') {
                         customImage.push()
                     }
                 }
