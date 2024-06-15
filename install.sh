@@ -23,6 +23,9 @@ mvn -v
 echo "Starting build process..."
 
 # Navigate to the directory containing the pom.xml file
+
+ls -rtl  /var/lib/jenkins/workspace/project
+ls -rtl  /var/lib/jenkins/workspace/project/*/
 cd /var/lib/jenkins/workspace/project2/XYZ_Technologies
 
 # Build the application using Maven
