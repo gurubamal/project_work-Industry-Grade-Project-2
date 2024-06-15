@@ -4,8 +4,8 @@
 set -e
 
 # Set environment variables
-DOCKER_REPO='gurubamal'
-IMAGE_NAME='iyztechnologies'
+DOCKER_REPO='your-docker-repo'
+IMAGE_NAME='xyztechnologies'
 IMAGE_TAG='latest'
 
 # Fix broken or missing repositories
@@ -22,9 +22,15 @@ mvn -v
 # Print the status message
 echo "Starting build process..."
 
+# Navigate to the directory containing the pom.xml file
+cd /var/lib/jenkins/workspace/project2/XYZ_Technologies
+
 # Build the application using Maven
 echo "Building the Maven project..."
 mvn clean package
+
+# Navigate back to the root workspace directory
+cd ..
 
 # Build Docker image
 echo "Building Docker image..."
