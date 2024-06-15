@@ -2,10 +2,10 @@ pipeline {
     agent { label 'master' }
 
     environment {
-        DOCKER_REPO = 'your-docker-repo' // Replace with your Docker repository
-        IMAGE_NAME = 'xyztechnologies'   // Replace with your image name
-        IMAGE_TAG = 'latest'             // Replace with your image tag if needed
-        DOCKER_CREDENTIALS_ID = 'your-docker-credentials-id' // Replace with your Jenkins Docker credentials ID
+        DOCKER_REPO = 'gurubamal'
+        IMAGE_NAME = 'iyztechnologies'
+        IMAGE_TAG = 'latest'
+        KUBECONFIG = '/home/jenkins/.kube/config'  // Path to the kubeconfig file
     }
 
     stages {
@@ -15,36 +15,14 @@ pipeline {
             }
         }
 
-        stage('Setup') {
-            steps {
-                sh 'chmod +x install.sh'
-                sh './install.sh'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                sh '''#!/bin/bash
-                source myprojectenv/bin/activate
-                python -m unittest
-                '''
-            }
-        }
-
-        stage('Build Maven Project') {
+        stage('Setup and Build') {
             steps {
                 script {
-                    docker.image('maven:3.6.3-jdk-11-slim').inside {
-                        sh 'mvn clean package'
+                    // Use credentials stored in Jenkins
+                    withCredentials([usernamePassword(credentialsId: 'a1e3d5ea-7989-47cf-a739-e39a637d664a', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                        sh 'chmod +x install.sh'
+                        sh './install.sh'
                     }
-                }
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    customImage = docker.build("${DOCKER_REPO}/${IMAGE_NAME}:${IMAGE_TAG}")
                 }
             }
         }
@@ -52,9 +30,49 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('', "${DOCKER_CREDENTIALS_ID}") {
-                        customImage.push()
+                    withCredentials([usernamePassword(credentialsId: 'a1e3d5ea-7989-47cf-a739-e39a637d664a', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                        sh '''
+                        echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+                        docker push ${DOCKER_REPO}/${IMAGE_NAME}:${IMAGE_TAG}
+                        '''
                     }
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    sh '''
+                    # Ensure kubectl is installed
+                    if ! command -v kubectl &> /dev/null; then
+                      sudo apt-get update
+                      sudo apt-get install -y kubectl
+                    fi
+
+                    # Set the KUBECONFIG environment variable
+                    export KUBECONFIG=${KUBECONFIG}
+                    
+                    # Label the node5 if not already labeled
+                    kubectl label nodes node5 kubernetes.io/hostname=node5 --overwrite
+
+                    # Create the namespace if it doesn't exist
+                    kubectl get namespace iynet || kubectl create namespace iynet
+
+                    # Apply the deployment
+                    kubectl apply -f ${WORKSPACE}/deploy_app.yaml
+
+                    # Check if the service is up and running
+                    NODE_PORT=$(kubectl get svc xyztechnologies-service -n iynet -o=jsonpath='{.spec.ports[0].nodePort}')
+                    NODE_IP=$(kubectl get nodes -o wide | grep node5 | awk '{print $6}')
+
+                    if [ -z "$NODE_PORT" ]; then
+                        echo "Failed to get the NodePort for the service"
+                        exit 1
+                    fi
+
+                    echo "Application is available at http://$NODE_IP:$NODE_PORT"
+                    '''
                 }
             }
         }
