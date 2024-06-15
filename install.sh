@@ -29,20 +29,25 @@ cd /var/lib/jenkins/workspace/project2/XYZ_Technologies
 echo "Building the Maven project..."
 mvn clean package
 
-# Navigate to Jenkins home directory
-cd /var/lib/jenkins
+# Create a directory within the Jenkins workspace for Docker operations
+DOCKER_WORKDIR="/var/lib/jenkins/workspace/docker_project"
+mkdir -p $DOCKER_WORKDIR
+cp -r /var/lib/jenkins/workspace/project2/XYZ_Technologies $DOCKER_WORKDIR
 
 # Copy Docker credentials
-echo "Copying Docker credentials to /var/lib/jenkins/.docker/config.json"
-sudo mkdir -p /var/lib/jenkins/.docker
-sudo cp /home/vagrant/.docker/config.json /var/lib/jenkins/.docker/config.json
+echo "Copying Docker credentials to $DOCKER_WORKDIR/.docker/config.json"
+mkdir -p $DOCKER_WORKDIR/.docker
+cp /home/vagrant/.docker/config.json $DOCKER_WORKDIR/.docker/config.json
 
 # Set the DOCKER_CONFIG environment variable
-export DOCKER_CONFIG=/var/lib/jenkins/.docker
+export DOCKER_CONFIG=$DOCKER_WORKDIR/.docker
+
+# Navigate to the new directory
+cd $DOCKER_WORKDIR/XYZ_Technologies
 
 # Build Docker image
 echo "Building Docker image..."
-docker build -t ${DOCKER_REPO}/${IMAGE_NAME}:${IMAGE_TAG} /var/lib/jenkins/workspace/project2/XYZ_Technologies
+docker build -t ${DOCKER_REPO}/${IMAGE_NAME}:${IMAGE_TAG} .
 
 # Push Docker image to the repository
 echo "Pushing Docker image to repository..."
