@@ -76,6 +76,18 @@ fi
 echo "Directory listing of $DOCKER_WORKDIR:"
 ls -l $DOCKER_WORKDIR
 
+# Create a .dockerignore file to ignore unnecessary files
+echo "Creating .dockerignore file"
+echo "target" > $DOCKER_WORKDIR/.dockerignore
+
+# Verify .dockerignore exists in the working directory
+if [ ! -f "$DOCKER_WORKDIR/.dockerignore" ]; then
+    echo "Error: .dockerignore was not created correctly in $DOCKER_WORKDIR"
+    echo "Directory listing of $DOCKER_WORKDIR:"
+    ls -l $DOCKER_WORKDIR
+    exit 1
+fi
+
 # Navigate to the new working directory
 cd $DOCKER_WORKDIR
 
@@ -85,7 +97,7 @@ echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
 
 # Build Docker image
 echo "Building Docker image..."
-docker build -t ${DOCKER_REPO}/${IMAGE_NAME}:${IMAGE_TAG} .
+docker build -t ${DOCKER_REPO}/${IMAGE_NAME}:${IMAGE_TAG} -f $DOCKER_WORKDIR/Dockerfile .
 
 # Push Docker image to the repository
 echo "Pushing Docker image to repository..."
