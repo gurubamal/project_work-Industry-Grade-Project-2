@@ -46,15 +46,18 @@ echo "Building the Maven project..."
 mvn clean package
 
 # Create a working directory within the project directory
+echo "Creating working directory $DOCKER_WORKDIR"
 mkdir -p $DOCKER_WORKDIR
 
 # Copy project files and Dockerfile to the new working directory
+echo "Copying project files to $DOCKER_WORKDIR"
 cp -r $PROJECT_DIR/* $DOCKER_WORKDIR/
 cp $DOCKERFILE_DIR/Dockerfile $DOCKER_WORKDIR/
 
 # Verify Dockerfile exists in the working directory
 if [ ! -f "$DOCKER_WORKDIR/Dockerfile" ]; then
     echo "Error: Dockerfile was not copied correctly to $DOCKER_WORKDIR"
+    ls -l $DOCKER_WORKDIR
     exit 1
 fi
 
