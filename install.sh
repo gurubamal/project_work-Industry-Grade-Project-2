@@ -10,8 +10,8 @@ IMAGE_TAG='latest'
 
 # Install Maven
 echo "Installing Maven..."
-apt-get update
-apt-get install -y maven
+sudo apt-get update
+sudo apt-get install -y maven
 
 # Print Maven version
 mvn -v
