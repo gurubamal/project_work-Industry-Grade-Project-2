@@ -26,9 +26,17 @@ sudo apt-get install -y python3 python3-venv python3-pip
 echo "Creating virtual environment..."
 python3 -m venv myprojectenv
 
+# Check if requirements.txt exists
+if [ ! -f "$PROJECT_DIR/requirements.txt" ]; then
+    echo "Creating a basic requirements.txt file"
+    cat <<EOF > $PROJECT_DIR/requirements.txt
+# Add your project dependencies here
+EOF
+fi
+
 echo "Activating virtual environment and installing dependencies..."
 source myprojectenv/bin/activate
-pip install -r requirements.txt
+pip install -r $PROJECT_DIR/requirements.txt
 
 # Print Maven version
 mvn -v
