@@ -42,7 +42,7 @@ mkdir -p $DOCKER_WORKDIR
 
 # Copy project files and Dockerfile to the new working directory
 cp -r . $DOCKER_WORKDIR
-cp $WORKSPACE_DIR/project2/Dockerfile $DOCKER_WORKDIR
+cp $WORKSPACE_DIR/project2/Dockerfile $DOCKER_WORKDIR/Dockerfile
 
 # Navigate to the new working directory
 cd $DOCKER_WORKDIR
