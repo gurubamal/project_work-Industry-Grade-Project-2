@@ -40,8 +40,9 @@ mvn clean package
 DOCKER_WORKDIR="$WORKSPACE_DIR/docker_project"
 mkdir -p $DOCKER_WORKDIR
 
-# Copy project files to the new working directory
+# Copy project files and Dockerfile to the new working directory
 cp -r . $DOCKER_WORKDIR
+cp $WORKSPACE_DIR/project2/XYZ_Technologies/Dockerfile $DOCKER_WORKDIR
 
 # Navigate to the new working directory
 cd $DOCKER_WORKDIR
