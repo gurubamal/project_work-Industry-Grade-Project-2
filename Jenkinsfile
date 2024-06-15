@@ -14,41 +14,14 @@ pipeline {
             }
         }
 
-        stage('Setup') {
+        stage('Setup and Build') {
             steps {
                 script {
                     // Use credentials stored in Jenkins
                     withCredentials([usernamePassword(credentialsId: 'a1e3d5ea-7989-47cf-a739-e39a637d664a', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                         sh 'chmod +x install.sh'
-                        sh 'export DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD && ./install.sh'
+                        sh './install.sh'
                     }
-                }
-            }
-        }
-
-        stage('Test') {
-            steps {
-                sh '''
-                #!/bin/bash
-                # Create and activate virtual environment
-                python3 -m venv myprojectenv
-                source myprojectenv/bin/activate
-
-                # Install dependencies
-                if [ -f "requirements.txt" ]; then
-                    pip install -r requirements.txt
-                fi
-
-                # Run tests
-                python -m unittest discover
-                '''
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    customImage = docker.build("${DOCKER_REPO}/${IMAGE_NAME}:${IMAGE_TAG}")
                 }
             }
         }
