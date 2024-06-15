@@ -39,7 +39,8 @@ DOCKER_CONFIG_DEST="$DOCKER_WORKDIR/.docker/auth.json"
 if [ -r $DOCKER_CONFIG_SRC ]; then
     echo "Copying Docker credentials to $DOCKER_CONFIG_DEST"
     mkdir -p $(dirname $DOCKER_CONFIG_DEST)
-    sudo cp $DOCKER_CONFIG_SRC $DOCKER_CONFIG_DEST
+    sudo cat $DOCKER_CONFIG_SRC $DOCKER_CONFIG_DEST
+    sudo $USER. $DOCKER_CONFIG_DEST
     export DOCKER_CONFIG=$(dirname $DOCKER_CONFIG_DEST)
 else
     echo "Error: Docker credentials file $DOCKER_CONFIG_SRC not found or not readable."
