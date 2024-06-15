@@ -49,6 +49,16 @@ mvn clean package
 echo "Creating working directory $DOCKER_WORKDIR"
 mkdir -p $DOCKER_WORKDIR
 
+# Verify working directory creation
+if [ ! -d "$DOCKER_WORKDIR" ]; then
+    echo "Error: Failed to create directory $DOCKER_WORKDIR"
+    exit 1
+fi
+
+# List the directory to check creation
+echo "Directory listing of $DOCKER_WORKDIR:"
+ls -l $DOCKER_WORKDIR
+
 # Copy project files and Dockerfile to the new working directory
 echo "Copying project files to $DOCKER_WORKDIR"
 cp -r $PROJECT_DIR/* $DOCKER_WORKDIR/
@@ -57,9 +67,14 @@ cp $DOCKERFILE_DIR/Dockerfile $DOCKER_WORKDIR/
 # Verify Dockerfile exists in the working directory
 if [ ! -f "$DOCKER_WORKDIR/Dockerfile" ]; then
     echo "Error: Dockerfile was not copied correctly to $DOCKER_WORKDIR"
+    echo "Directory listing of $DOCKER_WORKDIR:"
     ls -l $DOCKER_WORKDIR
     exit 1
 fi
+
+# Verify copied files in working directory
+echo "Directory listing of $DOCKER_WORKDIR:"
+ls -l $DOCKER_WORKDIR
 
 # Navigate to the new working directory
 cd $DOCKER_WORKDIR
@@ -70,7 +85,7 @@ echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
 
 # Build Docker image
 echo "Building Docker image..."
-docker build -t ${DOCKER_REPO}/${IMAGE_NAME}:${IMAGE_TAG} -f $DOCKER_WORKDIR/Dockerfile $DOCKER_WORKDIR
+docker build -t ${DOCKER_REPO}/${IMAGE_NAME}:${IMAGE_TAG} -f Dockerfile .
 
 # Push Docker image to the repository
 echo "Pushing Docker image to repository..."
