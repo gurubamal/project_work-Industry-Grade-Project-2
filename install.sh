@@ -8,6 +8,9 @@ DOCKER_REPO='gurubamal'
 IMAGE_NAME='iyztechnologies'
 IMAGE_TAG='latest'
 
+# Fix broken or missing repositories
+sudo rm -f /etc/apt/sources.list.d/kubernetes.list
+
 # Install Maven
 echo "Installing Maven..."
 sudo apt-get update
