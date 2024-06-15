@@ -22,17 +22,16 @@ mvn -v
 # Print the status message
 echo "Starting build process..."
 
-# Navigate to the directory containing the pom.xml file
-cd /var/lib/jenkins/workspace/project2/XYZ_Technologies
-
-# Build the application using Maven
-echo "Building the Maven project..."
-mvn clean package
-
-# Create a directory within the Jenkins workspace for Docker operations
-DOCKER_WORKDIR="/var/lib/jenkins/workspace/docker_project"
+# Create a working directory within /home/jenkins
+DOCKER_WORKDIR="/home/jenkins/docker_project"
 mkdir -p $DOCKER_WORKDIR
-cp -r /var/lib/jenkins/workspace/project2/XYZ_Technologies $DOCKER_WORKDIR
+
+# Navigate to the directory containing the pom.xml file and copy it to the new working directory
+cd /var/lib/jenkins/workspace/project2/XYZ_Technologies
+cp -r . $DOCKER_WORKDIR
+
+# Navigate to the new working directory
+cd $DOCKER_WORKDIR
 
 # Login to Docker registry using credentials from Jenkins
 echo "Logging into Docker registry..."
@@ -40,7 +39,7 @@ echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
 
 # Build Docker image
 echo "Building Docker image..."
-docker build -t ${DOCKER_REPO}/${IMAGE_NAME}:${IMAGE_TAG} $DOCKER_WORKDIR/XYZ_Technologies
+docker build -t ${DOCKER_REPO}/${IMAGE_NAME}:${IMAGE_TAG} .
 
 # Push Docker image to the repository
 echo "Pushing Docker image to repository..."
