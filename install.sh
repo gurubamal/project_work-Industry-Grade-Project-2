@@ -4,8 +4,8 @@
 set -e
 
 # Set environment variables
-DOCKER_REPO='your-docker-repo'
-IMAGE_NAME='xyztechnologies'
+DOCKER_REPO='gurubamal'
+IMAGE_NAME='iyztechnologies'
 IMAGE_TAG='latest'
 
 # Fix broken or missing repositories
