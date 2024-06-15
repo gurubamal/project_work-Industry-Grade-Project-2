@@ -37,17 +37,20 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    customImage = docker.build("${DOCKER_REPO}/${IMAGE_NAME}:${IMAGE_TAG}")
-                }
+                sh '''
+                docker build -t ${DOCKER_REPO}/${IMAGE_NAME}:${IMAGE_TAG} .
+                '''
             }
         }
 
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('', '') {
-                        customImage.push()
+                    withCredentials([usernamePassword(credentialsId: 'a1e3d5ea-7989-47cf-a739-e39a637d664a', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                        sh '''
+                        echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+                        docker push ${DOCKER_REPO}/${IMAGE_NAME}:${IMAGE_TAG}
+                        '''
                     }
                 }
             }
