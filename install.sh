@@ -9,8 +9,7 @@ IMAGE_NAME='iyztechnologies'
 IMAGE_TAG='latest'
 WORKSPACE_DIR='/var/lib/jenkins/workspace'
 PROJECT_DIR="$WORKSPACE_DIR/project2/XYZ_Technologies"
-DOCKERFILE_DIR="$WORKSPACE_DIR/project2"
-DOCKER_WORKDIR="$WORKSPACE_DIR/project2/docker_project"
+DOCKER_WORKDIR="$WORKSPACE_DIR/project2"
 
 # Fix broken or missing repositories
 sudo rm -f /etc/apt/sources.list.d/kubernetes.list
@@ -33,8 +32,8 @@ if [ ! -d "$PROJECT_DIR" ]; then
 fi
 
 # Ensure the Dockerfile exists
-if [ ! -f "$DOCKERFILE_DIR/Dockerfile" ]; then
-    echo "Error: Dockerfile not found in $DOCKERFILE_DIR"
+if [ ! -f "$DOCKER_WORKDIR/Dockerfile" ]; then
+    echo "Error: Dockerfile not found in $DOCKER_WORKDIR"
     exit 1
 fi
 
@@ -46,54 +45,54 @@ echo "Building the Maven project..."
 mvn clean package
 
 # Create a working directory within the project directory
-echo "Creating working directory $DOCKER_WORKDIR"
-mkdir -p $DOCKER_WORKDIR
+echo "Creating working directory $DOCKER_WORKDIR/docker_project"
+mkdir -p $DOCKER_WORKDIR/docker_project
 
 # Verify working directory creation
-if [ ! -d "$DOCKER_WORKDIR" ]; then
-    echo "Error: Failed to create directory $DOCKER_WORKDIR"
+if [ ! -d "$DOCKER_WORKDIR/docker_project" ]; then
+    echo "Error: Failed to create directory $DOCKER_WORKDIR/docker_project"
     exit 1
 fi
 
 # List the directory to check creation
-echo "Directory listing of $DOCKER_WORKDIR:"
-ls -l $DOCKER_WORKDIR
+echo "Directory listing of $DOCKER_WORKDIR/docker_project:"
+ls -l $DOCKER_WORKDIR/docker_project
 
 # Copy project files and Dockerfile to the new working directory
-echo "Copying project files to $DOCKER_WORKDIR"
-cp -r $PROJECT_DIR/* $DOCKER_WORKDIR/
-cp $DOCKERFILE_DIR/Dockerfile $DOCKER_WORKDIR/
+echo "Copying project files to $DOCKER_WORKDIR/docker_project"
+cp -r $PROJECT_DIR/* $DOCKER_WORKDIR/docker_project/
+cp $DOCKER_WORKDIR/Dockerfile $DOCKER_WORKDIR/docker_project/
 
 # Verify Dockerfile exists in the working directory
-if [ ! -f "$DOCKER_WORKDIR/Dockerfile" ]; then
-    echo "Error: Dockerfile was not copied correctly to $DOCKER_WORKDIR"
-    echo "Directory listing of $DOCKER_WORKDIR:"
-    ls -l $DOCKER_WORKDIR
+if [ ! -f "$DOCKER_WORKDIR/docker_project/Dockerfile" ]; then
+    echo "Error: Dockerfile was not copied correctly to $DOCKER_WORKDIR/docker_project"
+    echo "Directory listing of $DOCKER_WORKDIR/docker_project:"
+    ls -l $DOCKER_WORKDIR/docker_project
     exit 1
 fi
 
 # Verify copied files in working directory
-echo "Directory listing of $DOCKER_WORKDIR:"
-ls -l $DOCKER_WORKDIR
+echo "Directory listing of $DOCKER_WORKDIR/docker_project:"
+ls -l $DOCKER_WORKDIR/docker_project
 
 # Create a .dockerignore file to ignore unnecessary files
 echo "Creating .dockerignore file"
-echo "target" > $DOCKER_WORKDIR/.dockerignore
+echo "target" > $DOCKER_WORKDIR/docker_project/.dockerignore
 
 # Verify .dockerignore exists in the working directory
-if [ ! -f "$DOCKER_WORKDIR/.dockerignore" ]; then
-    echo "Error: .dockerignore was not created correctly in $DOCKER_WORKDIR"
-    echo "Directory listing of $DOCKER_WORKDIR:"
-    ls -l $DOCKER_WORKDIR
+if [ ! -f "$DOCKER_WORKDIR/docker_project/.dockerignore" ]; then
+    echo "Error: .dockerignore was not created correctly in $DOCKER_WORKDIR/docker_project"
+    echo "Directory listing of $DOCKER_WORKDIR/docker_project:"
+    ls -l $DOCKER_WORKDIR/docker_project
     exit 1
 fi
 
 # Navigate to the new working directory
-cd $DOCKER_WORKDIR
+cd $DOCKER_WORKDIR/docker_project
 
 # Login to Docker registry using credentials from Jenkins
 echo "Logging into Docker registry..."
-echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+echo $DOCKER_PASSWORD | sudo docker login -u $DOCKER_USERNAME --password-stdin
 
 # Build Docker image with elevated permissions
 echo "Building Docker image..."
