@@ -16,8 +16,13 @@ pipeline {
 
         stage('Setup') {
             steps {
-                sh 'chmod +x install.sh'
-                sh './install.sh'
+                script {
+                    // Use credentials stored in Jenkins
+                    withCredentials([usernamePassword(credentialsId: 'a1e3d5ea-7989-47cf-a739-e39a637d664a', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                        sh 'chmod +x install.sh'
+                        sh 'export DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD && ./install.sh'
+                    }
+                }
             }
         }
 
