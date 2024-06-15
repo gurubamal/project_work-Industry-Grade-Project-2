@@ -35,8 +35,8 @@ mkdir -p $DOCKER_WORKDIR
 cp -r /var/lib/jenkins/workspace/project2/XYZ_Technologies $DOCKER_WORKDIR
 
 # Check if the Docker config file exists and is readable
-DOCKER_CONFIG_SRC="/home/vagrant/.docker/config.json"
-DOCKER_CONFIG_DEST="$DOCKER_WORKDIR/.docker/config.json"
+DOCKER_CONFIG_SRC="/home/vagrant/.docker/auth.json"
+DOCKER_CONFIG_DEST="$DOCKER_WORKDIR/.docker/auth.json"
 if [ -r $DOCKER_CONFIG_SRC ]; then
     echo "Copying Docker credentials to $DOCKER_CONFIG_DEST"
     mkdir -p $(dirname $DOCKER_CONFIG_DEST)
