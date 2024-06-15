@@ -29,15 +29,18 @@ pipeline {
         stage('Test') {
             steps {
                 sh '''
+                #!/bin/bash
                 # Create and activate virtual environment
                 python3 -m venv myprojectenv
                 source myprojectenv/bin/activate
 
                 # Install dependencies
-                pip install -r requirements.txt
+                if [ -f "requirements.txt" ]; then
+                    pip install -r requirements.txt
+                fi
 
                 # Run tests
-                python -m unittest
+                python -m unittest discover
                 '''
             }
         }
