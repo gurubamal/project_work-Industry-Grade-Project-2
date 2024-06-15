@@ -7,6 +7,7 @@ set -e
 DOCKER_REPO='gurubamal'
 IMAGE_NAME='iyztechnologies'
 IMAGE_TAG='latest'
+WORKSPACE_DIR='/var/lib/jenkins/workspace'
 
 # Fix broken or missing repositories
 sudo rm -f /etc/apt/sources.list.d/kubernetes.list
@@ -22,19 +23,24 @@ mvn -v
 # Print the status message
 echo "Starting build process..."
 
+# Ensure the workspace and project directories exist
+if [ ! -d "$WORKSPACE_DIR/project2/XYZ_Technologies" ]; then
+    echo "Error: Directory $WORKSPACE_DIR/project2/XYZ_Technologies does not exist."
+    exit 1
+fi
+
 # Navigate to the directory containing the pom.xml file
-cd /home/jenkins/workspace/project2/XYZ_Technologies
+cd $WORKSPACE_DIR/project2/XYZ_Technologies
 
 # Build the application using Maven
 echo "Building the Maven project..."
 mvn clean package
 
 # Create a working directory within the Jenkins workspace
-DOCKER_WORKDIR="/home/jenkins/workspace/docker_project"
+DOCKER_WORKDIR="$WORKSPACE_DIR/docker_project"
 mkdir -p $DOCKER_WORKDIR
 
-# Navigate to the directory containing the pom.xml file and copy it to the new working directory
-cd /home/jenkins/workspace/project2/XYZ_Technologies
+# Copy project files to the new working directory
 cp -r . $DOCKER_WORKDIR
 
 # Navigate to the new working directory
