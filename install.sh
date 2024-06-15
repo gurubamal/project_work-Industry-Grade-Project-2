@@ -95,13 +95,13 @@ cd $DOCKER_WORKDIR
 echo "Logging into Docker registry..."
 echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
 
-# Build Docker image
+# Build Docker image with elevated permissions
 echo "Building Docker image..."
-docker build -t ${DOCKER_REPO}/${IMAGE_NAME}:${IMAGE_TAG} -f $DOCKER_WORKDIR/Dockerfile .
+sudo docker build -t ${DOCKER_REPO}/${IMAGE_NAME}:${IMAGE_TAG} .
 
-# Push Docker image to the repository
+# Push Docker image to the repository with elevated permissions
 echo "Pushing Docker image to repository..."
-docker push ${DOCKER_REPO}/${IMAGE_NAME}:${IMAGE_TAG}
+sudo docker push ${DOCKER_REPO}/${IMAGE_NAME}:${IMAGE_TAG}
 
 # Print the status message
 echo "Build and push process completed successfully."
