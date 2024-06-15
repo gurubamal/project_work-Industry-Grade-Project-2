@@ -1,0 +1,44 @@
+---
+- hosts: all
+  become: true
+  vars_files:
+    - secret.yml
+  tasks:
+    - name: apt-update
+      apt:
+        update_cache: yes
+    
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+    
+    - name: Create target directory
+      file:
+        path: /home/ubuntu/target
+        state: directory
+    
+    - name: Copy the source code to hosts
+      copy:
+        src: ./{{ item }}
+        dest: /home/ubuntu/target/
+        remote_src: yes
+      become_user: ubuntu
+      with_items:
+        - app
+        - migrations
+        - flasky.py
+        - config.py
+        - boot.sh
+        - data-dev.sqlite
+        - Dockerfile
+        - requirements
+    
+    - name: Set the executable permission
+      command: chmod +x /home/ubuntu/target/boot.sh
+    
+    - name: Build Docker Image
+      command: chdir=/home/ubuntu/target/ docker build . -t mediaapp
+    
+    - name: Run Docker Container
+      command: chdir=/home/ubuntu/target/ docker run -itd -p 8085:5000 mediaapp
