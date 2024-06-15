@@ -34,13 +34,18 @@ DOCKER_WORKDIR="/var/lib/jenkins/workspace/docker_project"
 mkdir -p $DOCKER_WORKDIR
 cp -r /var/lib/jenkins/workspace/project2/XYZ_Technologies $DOCKER_WORKDIR
 
-# Copy Docker credentials
-echo "Copying Docker credentials to $DOCKER_WORKDIR/.docker/config.json"
-mkdir -p $DOCKER_WORKDIR/.docker
-cp /home/vagrant/.docker/config.json $DOCKER_WORKDIR/.docker/config.json
-
-# Set the DOCKER_CONFIG environment variable
-export DOCKER_CONFIG=$DOCKER_WORKDIR/.docker
+# Check if the Docker config file exists and is readable
+DOCKER_CONFIG_SRC="/home/vagrant/.docker/config.json"
+DOCKER_CONFIG_DEST="$DOCKER_WORKDIR/.docker/config.json"
+if [ -r $DOCKER_CONFIG_SRC ]; then
+    echo "Copying Docker credentials to $DOCKER_CONFIG_DEST"
+    mkdir -p $(dirname $DOCKER_CONFIG_DEST)
+    sudo cp $DOCKER_CONFIG_SRC $DOCKER_CONFIG_DEST
+    export DOCKER_CONFIG=$(dirname $DOCKER_CONFIG_DEST)
+else
+    echo "Error: Docker credentials file $DOCKER_CONFIG_SRC not found or not readable."
+    exit 1
+fi
 
 # Navigate to the new directory
 cd $DOCKER_WORKDIR/XYZ_Technologies
