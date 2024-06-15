@@ -34,15 +34,15 @@ cd /var/lib/jenkins
 
 # Copy Docker credentials
 echo "Copying Docker credentials to /var/lib/jenkins/.docker/config.json"
-mkdir -p /var/lib/jenkins/.docker
-cp /home/vagrant/.docker/config.json /var/lib/jenkins/.docker/config.json
+sudo mkdir -p /var/lib/jenkins/.docker
+sudo cp /home/vagrant/.docker/config.json /var/lib/jenkins/.docker/config.json
+
+# Set the DOCKER_CONFIG environment variable
+export DOCKER_CONFIG=/var/lib/jenkins/.docker
 
 # Build Docker image
 echo "Building Docker image..."
 docker build -t ${DOCKER_REPO}/${IMAGE_NAME}:${IMAGE_TAG} /var/lib/jenkins/workspace/project2/XYZ_Technologies
-
-# Use Docker configuration
-export DOCKER_CONFIG=/var/lib/jenkins/.docker
 
 # Push Docker image to the repository
 echo "Pushing Docker image to repository..."
