@@ -29,6 +29,12 @@ if [ ! -d "$WORKSPACE_DIR/project2/XYZ_Technologies" ]; then
     exit 1
 fi
 
+# Ensure the Dockerfile exists
+if [ ! -f "$WORKSPACE_DIR/project2/Dockerfile" ]; then
+    echo "Error: Dockerfile not found in $WORKSPACE_DIR/project2"
+    exit 1
+fi
+
 # Navigate to the directory containing the pom.xml file
 cd $WORKSPACE_DIR/project2/XYZ_Technologies
 
@@ -42,11 +48,7 @@ mkdir -p $DOCKER_WORKDIR
 
 # Copy project files and Dockerfile to the new working directory
 cp -r . $DOCKER_WORKDIR
-if [ ! -f "$WORKSPACE_DIR/project2/XYZ_Technologies/Dockerfile" ]; then
-    echo "Error: Dockerfile not found in $WORKSPACE_DIR/project2/XYZ_Technologies"
-    exit 1
-fi
-cp $WORKSPACE_DIR/project2/XYZ_Technologies/Dockerfile $DOCKER_WORKDIR/Dockerfile
+cp $WORKSPACE_DIR/project2/Dockerfile $DOCKER_WORKDIR/Dockerfile
 
 # Verify Dockerfile exists in the working directory
 if [ ! -f "$DOCKER_WORKDIR/Dockerfile" ]; then
