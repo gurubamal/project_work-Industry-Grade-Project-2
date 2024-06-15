@@ -59,6 +59,12 @@ pipeline {
                     # Create the namespace if it doesn't exist
                     kubectl get namespace iynet || kubectl create namespace iynet
 
+                    # Check if deploy_app.yaml exists
+                    if [ ! -f "${WORKSPACE}/deploy_app.yaml" ]; then
+                        echo "Error: deploy_app.yaml not found!"
+                        exit 1
+                    fi
+
                     # Apply the deployment
                     kubectl apply -f ${WORKSPACE}/deploy_app.yaml
 
