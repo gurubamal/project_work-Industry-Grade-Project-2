@@ -19,6 +19,17 @@ echo "Installing Maven..."
 sudo apt-get update
 sudo apt-get install -y maven
 
+# Install Python and create virtual environment
+echo "Installing Python..."
+sudo apt-get install -y python3 python3-venv python3-pip
+
+echo "Creating virtual environment..."
+python3 -m venv myprojectenv
+
+echo "Activating virtual environment and installing dependencies..."
+source myprojectenv/bin/activate
+pip install -r requirements.txt
+
 # Print Maven version
 mvn -v
 
