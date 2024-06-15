@@ -10,7 +10,7 @@ IMAGE_TAG='latest'
 WORKSPACE_DIR='/var/lib/jenkins/workspace'
 PROJECT_DIR="$WORKSPACE_DIR/project2/XYZ_Technologies"
 DOCKERFILE_DIR="$WORKSPACE_DIR/project2"
-DOCKER_WORKDIR="$WORKSPACE_DIR/docker_project"
+DOCKER_WORKDIR="$WORKSPACE_DIR/project2/docker_project"
 
 # Fix broken or missing repositories
 sudo rm -f /etc/apt/sources.list.d/kubernetes.list
@@ -45,7 +45,7 @@ cd $PROJECT_DIR
 echo "Building the Maven project..."
 mvn clean package
 
-# Create a working directory within the Jenkins workspace
+# Create a working directory within the project directory
 mkdir -p $DOCKER_WORKDIR
 
 # Copy project files and Dockerfile to the new working directory
