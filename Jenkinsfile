@@ -38,6 +38,28 @@ pipeline {
                 }
             }
         }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                        sh '''
+                        # Ensure kubectl is installed
+                        if ! command -v kubectl &> /dev/null; then
+                          sudo apt-get update
+                          sudo apt-get install -y kubectl
+                        fi
+                        
+                        # Label the node5 if not already labeled
+                        kubectl label nodes node5 node=node5 --overwrite
+
+                        # Apply the deployment
+                        kubectl apply -f deploy_app.yaml
+                        '''
+                    }
+                }
+            }
+        }
     }
 
     post {
