@@ -22,13 +22,19 @@ mvn -v
 # Print the status message
 echo "Starting build process..."
 
+# Navigate to the directory containing the pom.xml file
+cd /home/jenkins/workspace/project2/XYZ_Technologies
+
+# Build the application using Maven
+echo "Building the Maven project..."
+mvn clean package
+
 # Create a working directory within the Jenkins workspace
-WORKSPACE_DIR="/var/lib/jenkins/workspace/project2"
-DOCKER_WORKDIR="$WORKSPACE_DIR/docker_project"
+DOCKER_WORKDIR="/home/jenkins/workspace/docker_project"
 mkdir -p $DOCKER_WORKDIR
 
 # Navigate to the directory containing the pom.xml file and copy it to the new working directory
-cd $WORKSPACE_DIR/XYZ_Technologies
+cd /home/jenkins/workspace/project2/XYZ_Technologies
 cp -r . $DOCKER_WORKDIR
 
 # Navigate to the new working directory
