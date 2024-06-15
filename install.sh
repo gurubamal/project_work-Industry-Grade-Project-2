@@ -65,7 +65,7 @@ echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
 
 # Build Docker image
 echo "Building Docker image..."
-docker build -t ${DOCKER_REPO}/${IMAGE_NAME}:${IMAGE_TAG} .
+docker build -f $DOCKER_WORKDIR/Dockerfile -t ${DOCKER_REPO}/${IMAGE_NAME}:${IMAGE_TAG} $DOCKER_WORKDIR
 
 # Push Docker image to the repository
 echo "Pushing Docker image to repository..."
