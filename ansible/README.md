@@ -20,4 +20,9 @@ Update Jenkins file:
 ![image](https://github.com/gurubamal/project_work-Industry-Grade-Project-2/assets/99092495/05d4748b-fc4d-49c2-af56-6657cd341d4e)
 
 
+Ansible Vault management commands: 
+
+![image](https://github.com/gurubamal/project_work-Industry-Grade-Project-2/assets/99092495/db879121-c3d3-4223-9535-9b9e10625dee)
+
+
 
