@@ -4,4 +4,4 @@
   vars_files: secret.yml
   tasks:
     - ansible.builtin.debug:
-        msg: The value of the variable from secret.yml file is {{ PASSWD1 }}
+        msg: The value of the variable from secret.yml file is {{ SECRET_KEY }}
