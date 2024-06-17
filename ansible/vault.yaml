@@ -1,7 +1,7 @@
 ---
 - hosts: all
   become: true
-  vars_files: passwd.yml
+  vars_files: secret.yml
   tasks:
     - ansible.builtin.debug:
         msg: The value of the variable from passwd.yml file is {{ PASSWD1 }}
